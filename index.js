@@ -17,10 +17,27 @@ var qbo = new QuickBooks(consumerKey,
                          true, // don't use the sandbox (i.e. for testing)
                          true); // turn debugging on
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Content-Type", "application/json");
+  req.accepts('application/json');
+  res.header("Cache-Control", "no-cache, no-store, must-revalidate");
+  res.header("Pragma", "no-cache");
+  res.header("Expires", 0);
+  next();
+});
+
 
 app.post('/invoice', function (req, res) {
   qbo.createInvoice(req.body, function invoiceCreated() {
     res.sendStatus(201);
+  });
+});
+
+app.get('/customers', function (req, res) {
+  qbo.findCustomers(function fetchedCustomers(e, customers) {
+    res.send(customers)
   });
 });
 
